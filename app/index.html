@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grace — Tucker &amp; Syd's wedding room</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="../marketing/index.html" aria-label="Grace home">
+        <span class="brand-mark">G</span><span>Grace</span>
+      </a>
+      <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+      <div class="wedding-title">
+        <strong>Tucker &amp; Syd</strong>
+        <span>Planning preview · date and venue not final</span>
+      </div>
+      <div class="top-actions">
+        <span class="sync-state"><i></i> Interactive prototype · sample data</span>
+        <a class="button subtle desktop-only" href="../wedding/index.html">View our site ↗</a>
+        <button class="avatar-stack" id="accountButton" aria-label="Account menu">
+          <span class="avatar t">T</span><span class="avatar s">S</span><span class="avatar g">G</span>
+        </button>
+      </div>
+      <div class="account-menu" id="accountMenu">
+        <strong>Tucker Carlile</strong><span>Partner · Full access</span>
+        <a href="../marketing/index.html">Log out</a>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="nav-group-label">Together</div>
+      <nav id="mainNav">
+        <button class="nav-item active" data-view="room"><span>♡</span>Our room</button>
+        <button class="nav-item" data-view="overview"><span>⌂</span>Overview</button>
+        <button class="nav-item" data-view="guests"><span>♙</span>Guests <b>147</b></button>
+        <button class="nav-item" data-view="website"><span>✦</span>Website <b>3</b></button>
+        <button class="nav-item" data-view="rsvps"><span>✓</span>RSVPs <b>58</b></button>
+        <button class="nav-item" data-view="registry"><span>◇</span>Registry</button>
+        <div class="nav-group-label plans">Plans</div>
+        <button class="nav-item" data-view="tasks"><span>○</span>Tasks &amp; decisions <b>8</b></button>
+        <button class="nav-item" data-view="budget"><span>$</span>Budget</button>
+        <button class="nav-item" data-view="vendors"><span>⌁</span>Vendors <b>6</b></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="../wedding/index.html" class="site-mini">
+          <span class="mini-eyebrow">Your guest site</span>
+          <strong>Private preview · not published</strong>
+          <span>Open preview ↗</span>
+        </a>
+        <a class="logout" href="../marketing/index.html">← Log out</a>
+      </div>
+    </aside>
+
+    <main class="workspace" id="workspace" tabindex="-1"></main>
+
+    <nav class="mobile-nav">
+      <button data-view="room" class="active"><span>♡</span>Room</button>
+      <button data-view="overview"><span>⌂</span>Home</button>
+      <button data-view="guests"><span>♙</span>Guests</button>
+      <button data-view="website"><span>✦</span>Site</button>
+      <button id="mobileMore"><span>•••</span>More</button>
+    </nav>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
