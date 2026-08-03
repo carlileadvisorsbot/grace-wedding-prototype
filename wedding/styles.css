@@ -4,8 +4,12 @@
 @media(max-width:520px){.hero-photo{background-position:center 34%}.hero h1{font-size:54px}.hero .eyebrow{letter-spacing:.18em}.date-lockup p{font-size:13px}.date-lockup em{display:block;margin:7px auto 0;width:max-content}.story-photo img{height:480px}.gallery-grid{display:block}.g2{display:none}.g1{height:500px}.travel-copy h2,.welcome h2{font-size:42px}.section-heading h2{font-size:46px}}
 
 /* Portable hosted assets: couple first, then a true sense of place. */
+.header-actions{justify-self:end;display:flex;align-items:center;gap:10px}.couple-login{border:1px solid rgba(255,255,255,.35);background:rgba(22,44,34,.18);padding:10px 14px;text-transform:uppercase;letter-spacing:.13em;font-size:9px;white-space:nowrap}.couple-login:hover{background:rgba(255,255,255,.12)}
 .hero-photo{background-image:url('../assets/engagement-candid.jpg');background-position:center 42%}
 .registry{background-image:linear-gradient(rgba(243,226,216,.91),rgba(243,226,216,.91)),url('../assets/syd-floral-board.jpg')}
 .lake-illustration.lake-photo{background:linear-gradient(0deg,rgba(24,55,45,.6),rgba(24,55,45,.02) 62%),url('../assets/walloon-lake-aerial.jpg') center/cover no-repeat}
 .lake-illustration.lake-photo p{top:auto;bottom:38px;transform:translateX(-50%);margin:0;text-shadow:0 3px 22px rgba(13,38,31,.55)}
+
+@media(max-width:850px){.header-actions{gap:6px}.couple-login{padding:8px 9px;font-size:8px}.rsvp-small{font-size:8px}}
+@media(max-width:390px){.couple-login{border:0;padding:8px 3px}.rsvp-small{padding:8px 7px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button{transition:none}}
