@@ -4,7 +4,7 @@
 @media(max-width:520px){.hero-photo{background-position:center 34%}.hero h1{font-size:54px}.hero .eyebrow{letter-spacing:.18em}.date-lockup p{font-size:13px}.date-lockup em{display:block;margin:7px auto 0;width:max-content}.story-photo img{height:480px}.gallery-grid{display:block}.g2{display:none}.g1{height:500px}.travel-copy h2,.welcome h2{font-size:42px}.section-heading h2{font-size:46px}}
 
 /* Portable hosted assets: couple first, then a true sense of place. */
-.hero-photo{background-image:url('../assets/engagement-portrait.jpg')}
+.hero-photo{background-image:url('../assets/engagement-candid.jpg');background-position:center 42%}
 .registry{background-image:linear-gradient(rgba(243,226,216,.91),rgba(243,226,216,.91)),url('../assets/syd-floral-board.jpg')}
 .lake-illustration.lake-photo{background:linear-gradient(0deg,rgba(24,55,45,.6),rgba(24,55,45,.02) 62%),url('../assets/walloon-lake-aerial.jpg') center/cover no-repeat}
 .lake-illustration.lake-photo p{top:auto;bottom:38px;transform:translateX(-50%);margin:0;text-shadow:0 3px 22px rgba(13,38,31,.55)}
