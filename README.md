@@ -12,8 +12,8 @@ Start at `index.html`. It redirects to the public product landing page.
 
 - This is a local front-end prototype with no backend writes.
 - It cannot send invitations, messages, RSVPs, vendor outreach, or payments.
-- June 26, 2027 is a tentative planning anchor.
-- Walloon Lake Country Club has a hold/first-refusal context but is not booked.
+- June 26, 2027 at Walloon Lake Country Club is the confirmed wedding plan.
+- Ceremony time, travel, lodging, dress code, registry, and RSVP-method details remain to come.
 - App counts and operational states labeled as sample/prototype are not wedding records.
 
 ## Local preview
