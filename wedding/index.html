@@ -4,10 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Tucker and Syd are getting married at Walloon Lake Country Club on June 26, 2027.">
-  <meta name="theme-color" content="#153b46">
-  <title>Tucker &amp; Syd — June 26, 2027</title>
+  <meta name="theme-color" content="#102f51">
+  <title>Tucker &amp; Syd · June 26, 2027</title>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23153b46'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='30' fill='%23efb5a5'%3ET%26S%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23102f51'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Georgia' font-size='25' fill='%23f8f3e9'%3ET%26S%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&amp;family=Italiana&amp;display=swap" rel="stylesheet">
   <link rel="preload" href="../assets/walloon-gallery/21-wide-lawn.jpg" as="image" media="(min-width: 761px)">
   <link rel="preload" href="../assets/walloon-gallery/04-dock-walk.jpg" as="image" media="(max-width: 760px)">
   <link rel="stylesheet" href="styles.css">
@@ -15,203 +18,152 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <div class="announcement">
-    <span>Save the date</span>
-    <p>June 26, 2027 · Walloon Lake, Michigan</p>
-  </div>
-
-  <header class="site-header" id="top">
-    <a class="monogram" href="#top" aria-label="Tucker and Syd home">T <i>&amp;</i> S</a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <a href="#story">Our story</a>
-      <a href="#details">Details</a>
-      <a href="#venue">Venue</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="header-actions">
-      <a class="details-link" href="#details">Wedding details</a>
-      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
-    </div>
-    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
-      <a href="#story">Our story</a>
-      <a href="#details">Details</a>
-      <a href="#venue">Venue</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#faq">FAQ</a>
-    </nav>
+  <header class="site-header">
+    <a class="brand" href="#home" data-tab-target="home" aria-label="Tucker and Syd, home">
+      <span class="monogram">T <i>&amp;</i> S</span>
+      <span class="brand-date">06 · 26 · 27</span>
+    </a>
+    <p class="place">Walloon Lake, Michigan</p>
   </header>
 
+  <nav class="tab-bar" aria-label="Wedding website sections">
+    <div class="tabs" role="tablist" aria-label="Wedding website">
+      <a id="tab-home" class="tab is-active" role="tab" aria-selected="true" aria-controls="home" tabindex="0" href="#home">Home</a>
+      <a id="tab-story" class="tab" role="tab" aria-selected="false" aria-controls="story" tabindex="-1" href="#story">Our Story</a>
+      <a id="tab-wedding" class="tab" role="tab" aria-selected="false" aria-controls="wedding" tabindex="-1" href="#wedding">Wedding</a>
+      <a id="tab-travel" class="tab" role="tab" aria-selected="false" aria-controls="travel" tabindex="-1" href="#travel">Travel</a>
+      <a id="tab-gallery" class="tab" role="tab" aria-selected="false" aria-controls="gallery" tabindex="-1" href="#gallery">Gallery</a>
+      <a id="tab-faq" class="tab" role="tab" aria-selected="false" aria-controls="faq" tabindex="-1" href="#faq">FAQ</a>
+    </div>
+  </nav>
+
   <main id="main">
-    <section class="hero" aria-labelledby="hero-title">
-      <picture class="hero-media">
+    <section id="home" class="tab-panel home-panel is-active" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
+      <picture class="home-photo">
         <source media="(max-width: 760px)" srcset="../assets/walloon-gallery/04-dock-walk.jpg">
-        <img src="../assets/walloon-gallery/21-wide-lawn.jpg" alt="Tucker and Syd walking together on a green lawn beside Walloon Lake">
+        <img src="../assets/walloon-gallery/21-wide-lawn.jpg" alt="Tucker and Syd walking together across the lawn beside Walloon Lake" fetchpriority="high">
       </picture>
-      <div class="hero-shade"></div>
-      <div class="hero-copy reveal">
+      <div class="home-wash"></div>
+      <div class="home-copy">
         <p class="eyebrow">Together with our favorite people</p>
-        <h1 id="hero-title"><span>Tucker</span><i>&amp;</i><span>Syd</span></h1>
-        <p class="hero-line">We’re getting married by the water.</p>
-        <div class="date-lockup">
-          <span>June 26, 2027</span>
-          <b>Walloon Lake</b>
-          <span>Michigan</span>
-        </div>
-        <a class="button button-light" href="#details">See the details</a>
+        <h1><span>Tucker</span><i>&amp;</i><span>Syd</span></h1>
+        <p class="home-date">Saturday, June 26, 2027</p>
+        <p class="home-venue">Walloon Lake Country Club</p>
+        <a class="soft-button" href="#wedding" data-tab-target="wedding">Wedding details</a>
       </div>
-      <a class="scroll-note" href="#welcome"><span>Come wander</span><i></i></a>
+      <p class="home-note">Meet us by the water.</p>
     </section>
 
-    <section class="welcome section" id="welcome">
-      <div class="welcome-mark reveal" aria-hidden="true">T <i>&amp;</i> S</div>
-      <div class="welcome-copy reveal">
-        <p class="eyebrow coral">With full hearts</p>
-        <h2>Meet us<br>by the water.</h2>
-        <p>We can’t wait to gather at Walloon Lake Country Club for a summer celebration with the people who mean the most to us.</p>
-      </div>
-      <p class="margin-note reveal">Long lake light.<br>Full hearts. One very good day.</p>
-    </section>
-
-    <section class="story section" id="story">
-      <div class="story-copy reveal">
-        <p class="eyebrow lake">Our story</p>
+    <section id="story" class="tab-panel story-panel" role="tabpanel" aria-labelledby="tab-story" tabindex="0">
+      <div class="panel-heading">
+        <p class="eyebrow blue">Our story</p>
         <h2>The easiest<br>kind of love.</h2>
         <p>The best parts of our life together are the simple ones: laughing until we can’t finish the sentence, choosing the next adventure, and finding a little more joy in ordinary days because we’re sharing them.</p>
         <p>Now we get to begin our next chapter surrounded by everyone who helped bring us here.</p>
         <span class="signature">Tucker &amp; Syd</span>
       </div>
-      <figure class="story-photo reveal">
-        <img src="../assets/walloon-gallery/19-warm-steps-candid.jpg" alt="Tucker and Syd sharing a warm look while seated on garden steps" loading="lazy" decoding="async">
-        <figcaption>Right where we belong.</figcaption>
-      </figure>
+      <div class="story-images">
+        <figure class="story-main">
+          <img src="../assets/walloon-gallery/19-warm-steps-candid.jpg" alt="Tucker and Syd sharing a warm look while seated on garden steps" loading="lazy" decoding="async">
+          <figcaption>Right where we belong.</figcaption>
+        </figure>
+        <figure class="story-detail">
+          <img src="../assets/walloon-gallery/20-ring-detail.jpg" alt="Syd’s engagement ring as she holds Tucker’s arm" loading="lazy" decoding="async">
+        </figure>
+      </div>
     </section>
 
-    <section class="editorial-break" aria-label="Engagement details">
-      <figure class="detail-frame reveal">
-        <img src="../assets/walloon-gallery/20-ring-detail.jpg" alt="Close-up of Syd’s engagement ring and Tucker and Syd holding one another" loading="lazy" decoding="async">
-        <figcaption>The little things, held close.</figcaption>
-      </figure>
-      <blockquote class="reveal">“One beautiful weekend,<br>years in the making.”</blockquote>
-    </section>
-
-    <section class="details section" id="details">
-      <div class="section-intro reveal">
-        <p class="eyebrow sand">The date is set</p>
-        <h2>Saturday at Walloon</h2>
-        <p>We’ll add the remaining guest details as they are confirmed. For now, here is what you can count on.</p>
+    <section id="wedding" class="tab-panel wedding-panel" role="tabpanel" aria-labelledby="tab-wedding" tabindex="0">
+      <div class="wedding-photo">
+        <img src="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" alt="Tucker and Syd beside white hydrangeas at Walloon Lake Country Club" loading="lazy" decoding="async">
       </div>
-      <div class="detail-grid">
-        <article class="detail-card reveal"><span>01</span><p class="card-kicker">When</p><h3>June 26, 2027</h3><p>Saturday · Ceremony time details to come</p></article>
-        <article class="detail-card featured reveal"><span>02</span><p class="card-kicker">Where</p><h3>Walloon Lake Country Club</h3><p>Walloon Lake, Michigan</p></article>
-        <article class="detail-card reveal"><span>03</span><p class="card-kicker">The weekend</p><h3>Celebrate with us</h3><p>Additional event details to come</p></article>
-      </div>
-
-      <div class="milestones reveal" aria-labelledby="milestones-title">
-        <div>
-          <p class="eyebrow">Planning calendar</p>
-          <h3 id="milestones-title">On the way to “I do”</h3>
+      <div class="wedding-copy">
+        <p class="eyebrow gold">The wedding</p>
+        <h2>Saturday<br>at Walloon.</h2>
+        <div class="fact-list">
+          <article><span>When</span><h3>June 26, 2027</h3><p>Saturday · Ceremony time to come</p></article>
+          <article><span>Where</span><h3>Walloon Lake Country Club</h3><p>Walloon Lake, Michigan</p></article>
+          <article><span>The celebration</span><h3>Details to come</h3><p>We’ll share the full schedule as plans are confirmed.</p></article>
         </div>
-        <ol>
-          <li><time datetime="2026-09-12">Sep 12, 2026</time><span>Menu tasting</span></li>
-          <li><time datetime="2026-09-15">By Sep 15, 2026</time><span>Save-the-dates</span></li>
-          <li><time datetime="2027-02">Early Feb 2027</time><span>Invitations</span></li>
-          <li><time datetime="2027-04-30">Apr 30, 2027</time><span>RSVPs due</span></li>
-          <li><time datetime="2027-06-26">Jun 26, 2027</time><span>Wedding day</span></li>
-        </ol>
       </div>
     </section>
 
-    <section class="venue section" id="venue">
-      <figure class="venue-photo reveal">
-        <img src="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" alt="Tucker and Syd beside white hydrangeas in front of the Walloon Lake clubhouse" loading="lazy" decoding="async">
-        <figcaption>Walloon Lake Country Club</figcaption>
-      </figure>
-      <div class="venue-copy reveal">
-        <p class="eyebrow lake">Northern Michigan</p>
-        <h2>A place<br>by the lake.</h2>
-        <p>Walloon Lake Country Club will be the setting for our wedding on June 26, 2027.</p>
+    <section id="travel" class="tab-panel travel-panel" role="tabpanel" aria-labelledby="tab-travel" tabindex="0">
+      <div class="travel-copy">
+        <p class="eyebrow blue">Northern Michigan</p>
+        <h2>A weekend<br>by the lake.</h2>
+        <p>We’re excited to welcome you to Walloon Lake. Lodging, transportation, and weekend guidance will be added here once every detail is confirmed.</p>
         <dl>
-          <div><dt>Travel &amp; lodging</dt><dd>Details to come</dd></div>
-          <div><dt>Dress code</dt><dd>Details to come</dd></div>
-          <div><dt>Ceremony time</dt><dd>Details to come</dd></div>
+          <div><dt>Travel</dt><dd>Details to come</dd></div>
+          <div><dt>Lodging</dt><dd>Details to come</dd></div>
+          <div><dt>Transportation</dt><dd>Details to come</dd></div>
         </dl>
+        <p class="invitation-note">Invitations are planned for early February 2027. RSVPs will be due April 30, 2027.</p>
       </div>
+      <figure class="travel-photo">
+        <img src="../assets/walloon-gallery/13-dock-black-and-white.jpg" alt="Tucker and Syd walking hand in hand along a dock at Walloon Lake" loading="lazy" decoding="async">
+        <figcaption>Up north, together.</figcaption>
+      </figure>
     </section>
 
-    <section class="monochrome-break" aria-label="Tucker and Syd at Walloon Lake">
-      <img src="../assets/walloon-gallery/13-dock-black-and-white.jpg" alt="Black-and-white photograph of Tucker and Syd walking hand in hand on a dock" loading="lazy" decoding="async">
-      <p class="reveal">Up north,<br>together.</p>
-    </section>
-
-    <section class="gallery section" id="gallery">
-      <div class="section-intro reveal">
-        <p class="eyebrow coral">Our favorite frames</p>
-        <h2>A little Walloon magic.</h2>
-        <p>Sunshine, bare feet, and a very happy afternoon by the lake.</p>
+    <section id="gallery" class="tab-panel gallery-panel" role="tabpanel" aria-labelledby="tab-gallery" tabindex="0">
+      <div class="gallery-heading">
+        <div><p class="eyebrow coral">Our favorite frames</p><h2>A little Walloon magic.</h2></div>
+        <p>Sunshine, bare feet, and one very happy afternoon by the lake.</p>
       </div>
       <div class="gallery-grid">
-        <button class="gallery-item wide reveal" data-full="../assets/walloon-gallery/01-lawn-spin.jpg" data-caption="A spin on the lawn" aria-label="Open photo: Tucker and Syd spinning on the lawn"><img src="../assets/walloon-gallery/01-lawn-spin.jpg" alt="Tucker and Syd holding hands and spinning on the lawn" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/02-beach-walk.jpg" data-caption="Barefoot by the lake" aria-label="Open photo: Tucker and Syd walking barefoot by Walloon Lake"><img src="../assets/walloon-gallery/02-beach-walk.jpg" alt="Tucker and Syd walking barefoot along the Walloon Lake shoreline" loading="lazy" decoding="async"></button>
-        <button class="gallery-item wide reveal" data-full="../assets/walloon-gallery/03-lakeside-run.jpg" data-caption="Off we go" aria-label="Open photo: Tucker and Syd running by the lake"><img src="../assets/walloon-gallery/03-lakeside-run.jpg" alt="Tucker and Syd running hand in hand across a lakeside lawn" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/04-dock-walk.jpg" data-caption="A walk down the dock" aria-label="Open photo: Tucker and Syd walking on a dock"><img src="../assets/walloon-gallery/04-dock-walk.jpg" alt="Tucker and Syd walking barefoot on a dock at Walloon Lake" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/05-lakeside-carry.jpg" data-caption="All smiles" aria-label="Open photo: Tucker carrying Syd"><img src="../assets/walloon-gallery/05-lakeside-carry.jpg" alt="Tucker carrying Syd while both laugh beside the lake" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/06-lake-hug.jpg" data-caption="Pure joy" aria-label="Open photo: Tucker and Syd hugging in the lake"><img src="../assets/walloon-gallery/06-lake-hug.jpg" alt="Tucker lifting Syd as they laugh together in Walloon Lake" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/07-dock-kiss.jpg" data-caption="A kiss on the dock" aria-label="Open photo: Tucker kissing Syd on the dock"><img src="../assets/walloon-gallery/07-dock-kiss.jpg" alt="Tucker kissing Syd on the cheek as they sit on a dock" loading="lazy" decoding="async"></button>
-        <button class="gallery-item wide reveal" data-full="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" data-caption="At the clubhouse" aria-label="Open photo: Tucker and Syd at the clubhouse"><img src="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" alt="Tucker and Syd standing by hydrangeas at the clubhouse" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/09-lake-gaze.jpg" data-caption="Just us" aria-label="Open photo: Tucker and Syd looking at each other"><img src="../assets/walloon-gallery/09-lake-gaze.jpg" alt="Tucker and Syd smiling at each other beside green lake water" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/10-dock-twirl.jpg" data-caption="A dockside twirl" aria-label="Open photo: Tucker twirling Syd"><img src="../assets/walloon-gallery/10-dock-twirl.jpg" alt="Tucker twirling Syd on a dock at Walloon Lake" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/11-hands-by-lake.jpg" data-caption="Hand in hand" aria-label="Open photo: Tucker and Syd holding hands"><img src="../assets/walloon-gallery/11-hands-by-lake.jpg" alt="Close-up of Tucker and Syd linking hands with the lake behind them" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/12-beach-portrait.jpg" data-caption="At the water’s edge" aria-label="Open photo: Tucker and Syd at the water’s edge"><img src="../assets/walloon-gallery/12-beach-portrait.jpg" alt="Tucker and Syd standing hand in hand at the water’s edge" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall bw reveal" data-full="../assets/walloon-gallery/13-dock-black-and-white.jpg" data-caption="A timeless walk" aria-label="Open black-and-white photo: Tucker and Syd on a dock"><img src="../assets/walloon-gallery/13-dock-black-and-white.jpg" alt="Black-and-white portrait of Tucker and Syd walking on a dock" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/14-garden-steps-portrait.jpg" data-caption="Together on the steps" aria-label="Open photo: Tucker and Syd on garden steps"><img src="../assets/walloon-gallery/14-garden-steps-portrait.jpg" alt="Tucker and Syd smiling together on garden steps" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/15-steps-laughing.jpg" data-caption="That laugh" aria-label="Open photo: Tucker and Syd laughing on the steps"><img src="../assets/walloon-gallery/15-steps-laughing.jpg" alt="Tucker laughing as Syd sits beside him on the steps" loading="lazy" decoding="async"></button>
-        <button class="gallery-item wide reveal" data-full="../assets/walloon-gallery/16-steps-candid-wide.jpg" data-caption="A quiet look" aria-label="Open photo: Tucker and Syd sharing a look"><img src="../assets/walloon-gallery/16-steps-candid-wide.jpg" alt="Tucker and Syd sharing a warm look while seated together" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/17-clubhouse-steps.jpg" data-caption="Clubhouse steps" aria-label="Open photo: Tucker and Syd on the clubhouse steps"><img src="../assets/walloon-gallery/17-clubhouse-steps.jpg" alt="Tucker and Syd seated on the clubhouse steps" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/18-lawn-portrait.jpg" data-caption="Lakeside lawn" aria-label="Open photo: Tucker and Syd on the lakeside lawn"><img src="../assets/walloon-gallery/18-lawn-portrait.jpg" alt="Tucker and Syd standing together on a green lakeside lawn" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/19-warm-steps-candid.jpg" data-caption="Right where we belong" aria-label="Open photo: Tucker and Syd seated together"><img src="../assets/walloon-gallery/19-warm-steps-candid.jpg" alt="Tucker and Syd seated close together and smiling" loading="lazy" decoding="async"></button>
-        <button class="gallery-item tall reveal" data-full="../assets/walloon-gallery/20-ring-detail.jpg" data-caption="The details" aria-label="Open detail photo: Syd’s ring"><img src="../assets/walloon-gallery/20-ring-detail.jpg" alt="Close-up of Syd’s engagement ring as she holds Tucker’s arm" loading="lazy" decoding="async"></button>
-        <button class="gallery-item wide reveal" data-full="../assets/walloon-gallery/21-wide-lawn.jpg" data-caption="Walloon in summer" aria-label="Open photo: Tucker and Syd walking on the lawn"><img src="../assets/walloon-gallery/21-wide-lawn.jpg" alt="Tucker and Syd walking together across the lawn by Walloon Lake" loading="lazy" decoding="async"></button>
+        <button class="gallery-item landscape" data-full="../assets/walloon-gallery/01-lawn-spin.jpg" data-caption="A spin on the lawn" aria-label="Open photo 1 of 21: Tucker and Syd spinning on the lawn"><img src="../assets/walloon-gallery/01-lawn-spin.jpg" alt="Tucker and Syd holding hands and spinning on the lawn" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/02-beach-walk.jpg" data-caption="Barefoot by the lake" aria-label="Open photo 2 of 21: Tucker and Syd walking by the lake"><img src="../assets/walloon-gallery/02-beach-walk.jpg" alt="Tucker and Syd walking barefoot along the Walloon Lake shoreline" loading="lazy" decoding="async"></button>
+        <button class="gallery-item landscape" data-full="../assets/walloon-gallery/03-lakeside-run.jpg" data-caption="Off we go" aria-label="Open photo 3 of 21: Tucker and Syd running by the lake"><img src="../assets/walloon-gallery/03-lakeside-run.jpg" alt="Tucker and Syd running hand in hand across a lakeside lawn" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/04-dock-walk.jpg" data-caption="A walk down the dock" aria-label="Open photo 4 of 21: Tucker and Syd on the dock"><img src="../assets/walloon-gallery/04-dock-walk.jpg" alt="Tucker and Syd walking barefoot on a dock at Walloon Lake" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/05-lakeside-carry.jpg" data-caption="All smiles" aria-label="Open photo 5 of 21: Tucker carrying Syd"><img src="../assets/walloon-gallery/05-lakeside-carry.jpg" alt="Tucker carrying Syd while both laugh beside the lake" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/06-lake-hug.jpg" data-caption="Pure joy" aria-label="Open photo 6 of 21: Tucker and Syd hugging in the lake"><img src="../assets/walloon-gallery/06-lake-hug.jpg" alt="Tucker lifting Syd as they laugh together in Walloon Lake" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/07-dock-kiss.jpg" data-caption="A kiss on the dock" aria-label="Open photo 7 of 21: Tucker kissing Syd"><img src="../assets/walloon-gallery/07-dock-kiss.jpg" alt="Tucker kissing Syd on the cheek as they sit on a dock" loading="lazy" decoding="async"></button>
+        <button class="gallery-item landscape" data-full="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" data-caption="At the clubhouse" aria-label="Open photo 8 of 21: Tucker and Syd at the clubhouse"><img src="../assets/walloon-gallery/08-clubhouse-hydrangeas.jpg" alt="Tucker and Syd standing by hydrangeas at the clubhouse" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/09-lake-gaze.jpg" data-caption="Just us" aria-label="Open photo 9 of 21: Tucker and Syd by the lake"><img src="../assets/walloon-gallery/09-lake-gaze.jpg" alt="Tucker and Syd smiling at each other beside green lake water" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/10-dock-twirl.jpg" data-caption="A dockside twirl" aria-label="Open photo 10 of 21: Tucker twirling Syd"><img src="../assets/walloon-gallery/10-dock-twirl.jpg" alt="Tucker twirling Syd on a dock at Walloon Lake" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/11-hands-by-lake.jpg" data-caption="Hand in hand" aria-label="Open photo 11 of 21: Tucker and Syd holding hands"><img src="../assets/walloon-gallery/11-hands-by-lake.jpg" alt="Close-up of Tucker and Syd linking hands with the lake behind them" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/12-beach-portrait.jpg" data-caption="At the water’s edge" aria-label="Open photo 12 of 21: Tucker and Syd at the shoreline"><img src="../assets/walloon-gallery/12-beach-portrait.jpg" alt="Tucker and Syd standing hand in hand at the water’s edge" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/13-dock-black-and-white.jpg" data-caption="A timeless walk" aria-label="Open photo 13 of 21: Tucker and Syd on a dock"><img src="../assets/walloon-gallery/13-dock-black-and-white.jpg" alt="Black-and-white portrait of Tucker and Syd walking on a dock" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/14-garden-steps-portrait.jpg" data-caption="Together on the steps" aria-label="Open photo 14 of 21: Tucker and Syd on garden steps"><img src="../assets/walloon-gallery/14-garden-steps-portrait.jpg" alt="Tucker and Syd smiling together on garden steps" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/15-steps-laughing.jpg" data-caption="That laugh" aria-label="Open photo 15 of 21: Tucker and Syd laughing"><img src="../assets/walloon-gallery/15-steps-laughing.jpg" alt="Tucker laughing as Syd sits beside him on the steps" loading="lazy" decoding="async"></button>
+        <button class="gallery-item landscape" data-full="../assets/walloon-gallery/16-steps-candid-wide.jpg" data-caption="A quiet look" aria-label="Open photo 16 of 21: Tucker and Syd sharing a look"><img src="../assets/walloon-gallery/16-steps-candid-wide.jpg" alt="Tucker and Syd sharing a warm look while seated together" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/17-clubhouse-steps.jpg" data-caption="Clubhouse steps" aria-label="Open photo 17 of 21: Tucker and Syd at the clubhouse"><img src="../assets/walloon-gallery/17-clubhouse-steps.jpg" alt="Tucker and Syd seated on the clubhouse steps" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/18-lawn-portrait.jpg" data-caption="Lakeside lawn" aria-label="Open photo 18 of 21: Tucker and Syd on the lawn"><img src="../assets/walloon-gallery/18-lawn-portrait.jpg" alt="Tucker and Syd standing together on a green lakeside lawn" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/19-warm-steps-candid.jpg" data-caption="Right where we belong" aria-label="Open photo 19 of 21: Tucker and Syd seated together"><img src="../assets/walloon-gallery/19-warm-steps-candid.jpg" alt="Tucker and Syd seated close together and smiling" loading="lazy" decoding="async"></button>
+        <button class="gallery-item portrait" data-full="../assets/walloon-gallery/20-ring-detail.jpg" data-caption="The details" aria-label="Open photo 20 of 21: Syd’s ring"><img src="../assets/walloon-gallery/20-ring-detail.jpg" alt="Close-up of Syd’s engagement ring as she holds Tucker’s arm" loading="lazy" decoding="async"></button>
+        <button class="gallery-item landscape" data-full="../assets/walloon-gallery/21-wide-lawn.jpg" data-caption="Walloon in summer" aria-label="Open photo 21 of 21: Tucker and Syd walking on the lawn"><img src="../assets/walloon-gallery/21-wide-lawn.jpg" alt="Tucker and Syd walking together across the lawn by Walloon Lake" loading="lazy" decoding="async"></button>
       </div>
     </section>
 
-    <section class="faq section" id="faq">
-      <div class="faq-heading reveal">
+    <section id="faq" class="tab-panel faq-panel" role="tabpanel" aria-labelledby="tab-faq" tabindex="0">
+      <div class="faq-heading">
         <p class="eyebrow coral">Good to know</p>
         <h2>Questions,<br>answered.</h2>
+        <p>We’ll keep this page current as the weekend comes together.</p>
       </div>
-      <div class="accordion reveal">
+      <div class="accordion">
         <details open><summary>When and where is the wedding?<span aria-hidden="true">+</span></summary><p>Saturday, June 26, 2027 at Walloon Lake Country Club in Walloon Lake, Michigan.</p></details>
         <details><summary>What time is the ceremony?<span aria-hidden="true">+</span></summary><p>Ceremony-time details to come.</p></details>
         <details><summary>What should I wear?<span aria-hidden="true">+</span></summary><p>Dress-code details to come.</p></details>
         <details><summary>Where should I stay?<span aria-hidden="true">+</span></summary><p>Travel and lodging details to come.</p></details>
-        <details><summary>When will invitations and RSVPs happen?<span aria-hidden="true">+</span></summary><p>Save-the-dates are planned by September 15, invitations for early February, and RSVPs will be due April 30, 2027. RSVP-method details to come.</p></details>
-        <details><summary>Will children or plus-ones be invited?<span aria-hidden="true">+</span></summary><p>Household and plus-one details to come with the invitations.</p></details>
+        <details><summary>When are invitations and RSVPs?<span aria-hidden="true">+</span></summary><p>Invitations are planned for early February 2027. RSVPs will be due April 30, 2027. RSVP-method details will come with the invitation.</p></details>
+        <details><summary>Will children or plus-ones be invited?<span aria-hidden="true">+</span></summary><p>Household and plus-one details will come with the invitations.</p></details>
         <details><summary>Is there a registry?<span aria-hidden="true">+</span></summary><p>Registry details to come.</p></details>
-      </div>
-    </section>
-
-    <section class="final-cta">
-      <div class="final-photo" role="img" aria-label="Tucker lifting Syd as they laugh together in Walloon Lake"></div>
-      <div class="final-copy reveal">
-        <p class="eyebrow">June 26, 2027</p>
-        <h2>We can’t wait<br>to celebrate.</h2>
-        <a class="button button-light" href="#details">Wedding details</a>
-        <p>More details to come.</p>
       </div>
     </section>
   </main>
 
   <footer>
-    <a class="monogram footer-mark" href="#top">T <i>&amp;</i> S</a>
+    <span class="monogram">T <i>&amp;</i> S</span>
     <p>June 26, 2027 · Walloon Lake, Michigan</p>
-    <a href="#gallery">View gallery</a>
+    <a href="#home" data-tab-target="home">Back home</a>
   </footer>
 
   <dialog id="lightbox" class="lightbox" aria-label="Photo viewer">
     <button class="lightbox-close" type="button" aria-label="Close photo viewer">×</button>
     <button class="lightbox-arrow previous" type="button" aria-label="Previous photo">‹</button>
-    <figure><img alt="Expanded gallery photo"><figcaption aria-live="polite"></figcaption></figure>
+    <figure><img alt=""><figcaption aria-live="polite"></figcaption></figure>
     <button class="lightbox-arrow next" type="button" aria-label="Next photo">›</button>
   </dialog>
 

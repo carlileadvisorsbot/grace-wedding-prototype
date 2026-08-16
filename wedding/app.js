@@ -1,28 +1,70 @@
-const header = document.querySelector('.site-header');
-const menuToggle = document.querySelector('.menu-toggle');
-const mobileNav = document.querySelector('.mobile-nav');
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+const tabTargets = [...document.querySelectorAll('[data-tab-target]')];
+const validPanels = new Set(panels.map(panel => panel.id));
+
+function activatePanel(id, { updateHistory = false, focusPanel = false } = {}) {
+  const panelId = validPanels.has(id) ? id : 'home';
+
+  tabs.forEach(tab => {
+    const active = tab.getAttribute('aria-controls') === panelId;
+    tab.classList.toggle('is-active', active);
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+  });
+
+  panels.forEach(panel => panel.classList.toggle('is-active', panel.id === panelId));
+
+  if (updateHistory && window.location.hash !== `#${panelId}`) {
+    window.history.pushState({ panel: panelId }, '', `#${panelId}`);
+  }
+
+  document.querySelector(`[aria-controls="${panelId}"]`)?.scrollIntoView({ inline: 'center', block: 'nearest' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  if (focusPanel) document.getElementById(panelId)?.focus({ preventScroll: true });
+}
+
+function panelFromLocation() {
+  return window.location.hash.slice(1) || 'home';
+}
+
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', event => {
+    event.preventDefault();
+    activatePanel(tab.getAttribute('aria-controls'), { updateHistory: true });
+  });
+
+  tab.addEventListener('keydown', event => {
+    let nextIndex;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = tabs.length - 1;
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    activatePanel(tabs[nextIndex].getAttribute('aria-controls'), { updateHistory: true });
+  });
+});
+
+tabTargets.forEach(link => link.addEventListener('click', event => {
+  const id = link.dataset.tabTarget;
+  if (!validPanels.has(id)) return;
+  event.preventDefault();
+  activatePanel(id, { updateHistory: true, focusPanel: link.classList.contains('soft-button') });
+}));
+
+window.addEventListener('popstate', () => activatePanel(panelFromLocation()));
+activatePanel(panelFromLocation());
+window.addEventListener('load', () => {
+  window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }));
+}, { once: true });
+
 const lightbox = document.querySelector('#lightbox');
 const galleryItems = [...document.querySelectorAll('[data-full]')];
 let activePhoto = 0;
-
-const syncHeader = () => header?.classList.toggle('scrolled', window.scrollY > 54);
-syncHeader();
-window.addEventListener('scroll', syncHeader, { passive: true });
-
-function closeMenu() {
-  menuToggle?.setAttribute('aria-expanded', 'false');
-  menuToggle?.setAttribute('aria-label', 'Open menu');
-  mobileNav?.classList.remove('open');
-}
-
-menuToggle?.addEventListener('click', () => {
-  const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
-  menuToggle.setAttribute('aria-expanded', String(!isOpen));
-  menuToggle.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
-  mobileNav?.classList.toggle('open', !isOpen);
-});
-
-mobileNav?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
 
 function showPhoto(index) {
   activePhoto = (index + galleryItems.length) % galleryItems.length;
@@ -57,18 +99,3 @@ document.querySelectorAll('details').forEach(detail => {
     });
   });
 });
-
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const reveals = document.querySelectorAll('.reveal');
-if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-  reveals.forEach(item => item.classList.add('in-view'));
-} else {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('in-view');
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -35px' });
-  reveals.forEach(item => observer.observe(item));
-}
