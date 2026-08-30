@@ -86,6 +86,9 @@ async function loadAuthenticatedWorkspace() {
   setText('sidebarLogout', '← Log out');
   document.body.dataset.weddingId = wedding.id;
   document.body.dataset.userId = session.user.id;
+  document.body.dataset.weddingName = wedding.name;
+  document.body.dataset.weddingDate = wedding.event_date || '';
+  document.body.dataset.weddingStatus = wedding.status;
 
   const logout = async (event) => {
     event.preventDefault();
@@ -102,7 +105,7 @@ try {
     const ready = await loadAuthenticatedWorkspace();
     if (!ready) throw new Error('Authentication redirect or wedding assignment required.');
   }
-  await import('./app.js?v=20260830-3');
+  await import('./app.js?v=20260830-4');
 } catch (error) {
   if (!String(error.message).includes('Authentication redirect')) {
     console.error(error);

@@ -37,6 +37,8 @@ async function recordActivity(action, entityType, entityId, afterData = null) {
 }
 
 function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit }) {
+  const trigger = document.activeElement;
+  const shell = document.querySelector('.app-shell');
   const dialog = document.createElement('dialog');
   dialog.className = 'data-dialog';
   dialog.innerHTML = `<form method="dialog" class="data-form">
@@ -52,7 +54,12 @@ function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit
     <div class="form-actions"><button class="button subtle" value="cancel">Cancel</button><button class="button primary" id="dialogSubmit" value="default">${escapeHtml(submitLabel)}</button></div>
   </form>`;
   document.body.append(dialog);
-  dialog.addEventListener('close', () => dialog.remove());
+  dialog.addEventListener('close', () => {
+    shell?.removeAttribute('inert');
+    shell?.removeAttribute('aria-hidden');
+    dialog.remove();
+    trigger?.focus?.();
+  });
   dialog.querySelector('form').addEventListener('submit', async event => {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
@@ -74,6 +81,8 @@ function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit
     event.target.removeAttribute?.('aria-invalid');
     dialog.querySelector('.form-error').textContent = '';
   });
+  shell?.setAttribute('inert', '');
+  shell?.setAttribute('aria-hidden', 'true');
   dialog.showModal();
 }
 
