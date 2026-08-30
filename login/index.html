@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Log in — Grace</title>
+  <title>Account access — Grace</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,15 +11,26 @@
     <section class="login-card">
       <a class="brand" href="../marketing/index.html"><span class="brand-mark">G</span><span>Grace</span></a>
       <span class="eyebrow">Admin · Private wedding room</span>
-      <h1>Log in or sign up.</h1>
-      <p class="intro">Enter your email and we’ll send a secure sign-in link. New Tucker + Syd accounts enter the wedding code after verifying their email.</p>
+      <h1 id="authTitle">Welcome back.</h1>
+      <p class="intro" id="authIntro">Log in with the email and password you chose for your private wedding workspace.</p>
+      <div class="auth-tabs" id="authTabs" role="tablist" aria-label="Account access">
+        <button type="button" id="signInTab" class="active" role="tab" aria-selected="true">Log in</button>
+        <button type="button" id="signUpTab" role="tab" aria-selected="false">Create account</button>
+      </div>
       <form id="loginForm">
         <label for="email">Email address</label>
         <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-        <button type="submit" id="submitButton">Email me a sign-in link</button>
+        <label for="password" id="passwordLabel">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" required>
+        <div id="confirmField" hidden>
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8">
+        </div>
+        <button type="submit" id="submitButton">Log in</button>
       </form>
+      <button class="text-button" type="button" id="forgotPassword">Forgot your password?</button>
       <div class="notice" id="notice" role="status" aria-live="polite"></div>
-      <p class="privacy">Only pre-approved partner emails can use the wedding code.</p>
+      <p class="privacy">New accounts still need a pre-approved partner email and the wedding code.</p>
     </section>
   </main>
   <script type="module" src="app.js"></script>
