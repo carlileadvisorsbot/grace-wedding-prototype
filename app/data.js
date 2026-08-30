@@ -7,6 +7,27 @@ const guestName = guest => [guest.preferred_name || guest.first_name, guest.last
 const weddingId = () => document.body.dataset.weddingId;
 const userId = () => document.body.dataset.userId;
 
+class FieldValidationError extends Error {
+  constructor(field, message) {
+    super(message);
+    this.field = field;
+  }
+}
+
+function normalizeSecureUrl(value) {
+  let candidate = String(value || '').trim();
+  if (!candidate) throw new FieldValidationError('url', 'Enter the registry website address.');
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(candidate)) candidate = `https://${candidate}`;
+  if (/^http:\/\//i.test(candidate)) candidate = `https://${candidate.slice(7)}`;
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== 'https:' || !url.hostname.includes('.')) throw new Error('Invalid secure URL');
+    return url.href;
+  } catch {
+    throw new FieldValidationError('url', 'Use a complete secure link, such as https://amazon.com/your-registry.');
+  }
+}
+
 async function recordActivity(action, entityType, entityId, afterData = null) {
   const { error } = await supabase.from('activity_log').insert({
     wedding_id: weddingId(), actor_user_id: userId(), action,
@@ -44,8 +65,14 @@ function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit
     try { await onSubmit(payload); dialog.close(); }
     catch (error) {
       dialog.querySelector('.form-error').textContent = error.message || 'Could not save this change.';
+      const invalidField = error.field && dialog.querySelector(`[name="${error.field}"]`);
+      if (invalidField) { invalidField.setAttribute('aria-invalid', 'true'); invalidField.focus(); }
       button.disabled = false; button.textContent = submitLabel;
     }
+  });
+  dialog.addEventListener('input', event => {
+    event.target.removeAttribute?.('aria-invalid');
+    dialog.querySelector('.form-error').textContent = '';
   });
   dialog.showModal();
 }
@@ -139,11 +166,14 @@ async function loadRegistry(toast) {
   const id = weddingId();
   const { data: links, error } = await supabase.from('registry_links').select('*').eq('wedding_id', id).order('sort_order').order('created_at'); if (error) throw error;
   document.querySelector('#liveRegistry').innerHTML = links.length ? links.map((link, index) => `<div class="card registry-card"><div class="registry-icon">${escapeHtml(link.name[0] || '◇')}</div><div class="registry-status"><span class="pill ${link.is_published ? 'green' : 'gold'}">${link.is_published ? 'Published' : 'Hidden'}</span></div><h3>${escapeHtml(link.name)}</h3><p>${escapeHtml(link.description || 'No description yet')}</p><div class="registry-actions"><a class="chip" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">Preview</a><button class="chip edit-registry" data-id="${link.id}">Edit</button><button class="chip outline move-registry" data-id="${link.id}" data-direction="-1" ${index === 0 ? 'disabled' : ''}>↑</button><button class="chip outline move-registry" data-id="${link.id}" data-direction="1" ${index === links.length - 1 ? 'disabled' : ''}>↓</button><button class="chip outline delete-registry" data-id="${link.id}">Delete</button></div></div>`).join('') : '<div class="card registry-card"><div class="registry-icon">◇</div><h3>No registry links yet</h3><p>Add one when you are ready. It will stay hidden by default.</p></div>';
-  const fields = [{ name: 'name', label: 'Registry name', required: true, placeholder: 'Zola' }, { name: 'url', label: 'Secure URL', type: 'url', required: true, placeholder: 'https://…' }, { name: 'description', label: 'Guest-facing description', type: 'textarea' }, { name: 'is_published', label: 'Mark ready to publish', type: 'checkbox' }];
+  const fields = [{ name: 'name', label: 'Registry or store name', required: true, placeholder: 'Amazon, Zola, or Honeyfund' }, { name: 'url', label: 'Website URL', type: 'url', required: true, placeholder: 'https://…' }, { name: 'description', label: 'Guest-facing description', type: 'textarea' }, { name: 'is_published', label: 'Mark ready to publish', type: 'checkbox' }];
   const saveLink = existing => openDialog({ title: existing ? `Edit ${existing.name}` : 'Add a registry link', fields, values: existing || {}, onSubmit: async payload => {
+    payload.url = normalizeSecureUrl(payload.url);
     const values = { ...payload, wedding_id: id }; if (!existing) values.sort_order = links.length * 10;
     const query = existing ? supabase.from('registry_links').update(values).eq('id', existing.id).eq('wedding_id', id) : supabase.from('registry_links').insert(values);
-    const { data, error: saveError } = await query.select().single(); if (saveError) throw saveError;
+    const { data, error: saveError } = await query.select().single();
+    if (saveError?.message?.includes('registry_links_url_check')) throw new FieldValidationError('url', 'Use a secure registry link beginning with https://.');
+    if (saveError) throw new Error('We could not save that registry link. Please check the details and try again.');
     await recordActivity(existing ? 'updated' : 'created', 'registry_link', data.id, data); toast(existing ? 'Registry link updated' : 'Registry link added'); await loadRegistry(toast);
   }});
   document.querySelector('#addRegistry').onclick = () => saveLink(null);
