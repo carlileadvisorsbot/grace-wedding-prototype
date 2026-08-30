@@ -14,19 +14,19 @@
       </a>
       <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
       <div class="wedding-title">
-        <strong>Tucker &amp; Syd</strong>
-        <span>Planning preview · date and venue not final</span>
+        <strong id="weddingName">Tucker &amp; Syd</strong>
+        <span id="weddingMeta">Planning preview · sample data</span>
       </div>
       <div class="top-actions">
-        <span class="sync-state"><i></i> Interactive prototype · sample data</span>
+        <span class="sync-state" id="syncState"><i></i> Interactive prototype · sample data</span>
         <a class="button subtle desktop-only" href="../wedding/index.html">View our site ↗</a>
         <button class="avatar-stack" id="accountButton" aria-label="Account menu">
           <span class="avatar t">T</span><span class="avatar s">S</span><span class="avatar g">G</span>
         </button>
       </div>
       <div class="account-menu" id="accountMenu">
-        <strong>Tucker Carlile</strong><span>Partner · Full access</span>
-        <a href="../marketing/index.html">Log out</a>
+        <strong id="accountName">Prototype partner</strong><span id="accountRole">Demo · not signed in</span>
+        <a href="../marketing/index.html" id="logoutButton">Leave demo</a>
       </div>
     </header>
 
@@ -35,9 +35,9 @@
       <nav id="mainNav">
         <button class="nav-item active" data-view="room"><span>♡</span>Our room</button>
         <button class="nav-item" data-view="overview"><span>⌂</span>Overview</button>
-        <button class="nav-item" data-view="guests"><span>♙</span>Guests <b>147</b></button>
+        <button class="nav-item" data-view="guests"><span>♙</span>Guests</button>
         <button class="nav-item" data-view="website"><span>✦</span>Website <b>3</b></button>
-        <button class="nav-item" data-view="rsvps"><span>✓</span>RSVPs <b>58</b></button>
+        <button class="nav-item" data-view="rsvps"><span>✓</span>RSVPs</button>
         <button class="nav-item" data-view="registry"><span>◇</span>Registry</button>
         <div class="nav-group-label plans">Plans</div>
         <button class="nav-item" data-view="tasks"><span>○</span>Tasks &amp; decisions <b>8</b></button>
@@ -50,7 +50,7 @@
           <strong>Private preview · not published</strong>
           <span>Open preview ↗</span>
         </a>
-        <a class="logout" href="../marketing/index.html">← Log out</a>
+        <a class="logout" href="../marketing/index.html" id="sidebarLogout">← Leave demo</a>
       </div>
     </aside>
 
@@ -65,6 +65,6 @@
     </nav>
   </div>
   <div class="toast" id="toast" role="status"></div>
-  <script src="app.js"></script>
+  <script type="module" src="bootstrap.js"></script>
 </body>
 </html>

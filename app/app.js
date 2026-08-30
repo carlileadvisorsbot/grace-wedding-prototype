@@ -1,3 +1,5 @@
+import { bindLiveView, escapeHtml, guestsView, registryView } from './data.js';
+
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
 const workspace = $('#workspace');
@@ -39,6 +41,9 @@ vendors: () => pageHead('Vendors','Research and conversations organized without 
   <div class="grid two"><div class="card vendor-card"><div class="vendor-logo">W</div><div class="vendor-copy"><h3>Walloon Lake Country Club</h3><p>Venue & catering · Walloon Lake, MI</p><div class="vendor-meta"><span class="pill gold">Under consideration</span><span class="pill">June 26 hold</span><span class="pill gray">Not booked</span></div></div></div><div class="card vendor-card"><div class="vendor-logo">P</div><div class="vendor-copy"><h3>Photographer shortlist</h3><p>Sample workflow · no vendor selected</p><div class="vendor-meta"><span class="pill">Research placeholder</span><span class="pill gray">No commitment</span></div></div></div><div class="card vendor-card"><div class="vendor-logo">F</div><div class="vendor-copy"><h3>Floral direction</h3><p>Airy wild-garden inspiration</p><div class="vendor-meta"><span class="pill gold">Syd priority</span><span class="pill">Mood board saved</span><span class="pill gray">No vendor selected</span></div></div></div><div class="card vendor-card"><div class="vendor-logo">DJ</div><div class="vendor-copy"><h3>Music shortlist</h3><p>Sample workflow · no vendor selected</p><div class="vendor-meta"><span class="pill">Not started</span><span class="pill gray">Prototype</span></div></div></div><div class="card vendor-card"><div class="vendor-logo">C</div><div class="vendor-copy"><h3>Ceremony music</h3><p>No vendor selected yet</p><div class="vendor-meta"><span class="pill gray">Not started</span></div></div></div><div class="card vendor-card"><div class="vendor-logo">H</div><div class="vendor-copy"><h3>Hotel room blocks</h3><p>Future planning workflow</p><div class="vendor-meta"><span class="pill gold">Needs research</span><span class="pill gray">No outreach sent</span></div></div></div></div>`
 };
 
+views.guests = () => guestsView(pageHead);
+views.registry = () => registryView(pageHead);
+
 function pageHead(title,intro,kicker,actions=''){return `<section class="page"><header class="page-head"><div><span class="eyebrow">${kicker}</span><h1>${title}</h1><p class="page-intro">${intro}</p></div><div class="head-actions">${actions}</div></header>`}
 function guestRow(initials,name,detail,events,rsvp,address,by,status){return `<tr data-search="${name.toLowerCase()}"><td><div class="person"><span class="person-dot">${initials}</span><div><strong>${name}</strong><small>${detail}</small></div></div></td><td>${events}</td><td><span class="pill ${status}">${rsvp}</span></td><td>${address}</td><td>${by}</td></tr>`}
 
@@ -48,14 +53,18 @@ function showView(name, push=true){
   $$('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===name));
   $$('.mobile-nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===name));
   $('#sidebar').classList.remove('open'); workspace.focus();
-  bindView(); if(push) history.replaceState(null,'',`#${name}`);
+  bindView(name); if(push) history.replaceState(null,'',`#${name}`);
 }
-function bindView(){
+function bindView(name){
   $$('.go',workspace).forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
   $$('.demo',workspace).forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast||'Demo interaction')));
   const form=$('#composer'); if(form) form.addEventListener('submit',e=>{e.preventDefault();const input=$('#chatInput');if(!input.value.trim())return;toast('Grace received your message — demo only');input.value=''});
   const undo=$('#undoAunt'); if(undo) undo.addEventListener('click',()=>{const c=$('#auntAction');c.innerHTML='<div class="action-title"><span class="check" style="background:#887276">↶</span>Change undone</div><div class="action-body">Aunt Kim was returned to her previous draft state. Your activity history still shows what happened.</div>';toast('Guest change undone')});
   const search=$('#guestSearch');if(search)search.addEventListener('input',()=>{$$('#guestTable tbody tr').forEach(row=>{if(row.classList.contains('household-row'))return;row.style.display=row.dataset.search.includes(search.value.toLowerCase())?'':'none'})});
+  bindLiveView(name, toast).catch(error => {
+    const target = name === 'guests' ? $('#liveGuestList') : name === 'registry' ? $('#liveRegistry') : null;
+    if (target) target.innerHTML = `<div class="empty-note">${escapeHtml(error.message || 'Could not load this section.')}</div>`;
+  });
 }
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 $$('[data-view]', $('#mainNav')).forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
