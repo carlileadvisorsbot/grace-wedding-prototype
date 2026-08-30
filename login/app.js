@@ -19,6 +19,7 @@ const safeNext = requestedNext && new URL(requestedNext, window.location.href).o
   ? requestedNext
   : new URL('../app/', window.location.href).href;
 const resetMode = new URLSearchParams(window.location.search).get('reset') === '1';
+const signUpMode = new URLSearchParams(window.location.search).get('mode') === 'signup';
 let mode = 'signIn';
 
 function showNotice(message, isError = false) {
@@ -73,6 +74,8 @@ if (!isSupabaseConfigured) {
     else showNotice('Open the newest password-reset link from your email to continue.', true);
   } else if (session) {
     window.location.replace(safeNext);
+  } else if (signUpMode) {
+    setMode('signUp');
   }
 }
 
