@@ -102,7 +102,7 @@ try {
     const ready = await loadAuthenticatedWorkspace();
     if (!ready) throw new Error('Authentication redirect or wedding assignment required.');
   }
-  await import('./app.js');
+  await import('./app.js?v=20260830-3');
 } catch (error) {
   if (!String(error.message).includes('Authentication redirect')) {
     console.error(error);

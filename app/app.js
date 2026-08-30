@@ -60,7 +60,7 @@ function showView(name, push=true){
   workspace.innerHTML = views[name]() + (name==='room' ? '' : '</section>');
   $$('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===name));
   $$('.mobile-nav [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===name));
-  $('#sidebar').classList.remove('open'); workspace.focus();
+  $('#sidebar').classList.remove('open'); workspace.focus({preventScroll:true}); window.scrollTo(0,0);
   bindView(name); if(push) history.replaceState(null,'',`#${name}`);
 }
 function bindView(name){
