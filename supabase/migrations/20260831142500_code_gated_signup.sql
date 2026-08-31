@@ -160,7 +160,7 @@ begin
     select * into claimed_member
       from public.wedding_members
      where wedding_id = reservation.wedding_id and user_id is null
-     order by created_at
+     order by (lower(invited_email) = current_email) desc, created_at
      for update skip locked
      limit 1;
     if claimed_member.id is null then
@@ -209,7 +209,7 @@ begin
     select * into claimed_member
       from public.wedding_members
      where wedding_id = target_wedding.id and user_id is null
-     order by created_at
+     order by (lower(invited_email) = current_email) desc, created_at
      for update skip locked
      limit 1;
     if claimed_member.id is null then raise exception 'This wedding workspace has no partner seats available.'; end if;
