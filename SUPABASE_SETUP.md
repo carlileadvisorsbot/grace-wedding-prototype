@@ -41,7 +41,7 @@ These values identify the Supabase project; security comes from authentication a
 
 ## 5. Create the two partner accounts
 
-Provision a fresh six-digit signup code directly in Supabase; never commit a live code to the repository. Each partner opens `/login/?mode=signup`, enters an email, password twice, and the signup code, then verifies the email.
+Provision a fresh six-digit signup code directly in Supabase; never commit a live code to the repository. Anyone given that code can open `/login/?mode=signup`, enter an email and password twice, and immediately join the wedding workspace. Rotate the code whenever future access should stop.
 
 Each partner gets a separate login and equal `partner` membership in the same wedding room.
 

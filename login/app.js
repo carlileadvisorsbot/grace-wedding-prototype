@@ -139,8 +139,9 @@ form.addEventListener('submit', async (event) => {
       return;
     }
     form.reset();
-    showNotice('Account created. Check your email to verify it; your wedding workspace will open automatically.');
-    button.textContent = 'Check your email';
+    showNotice('Account created. Log in to open your wedding workspace.');
+    button.disabled = false;
+    button.textContent = 'Create account';
     return;
   }
 
