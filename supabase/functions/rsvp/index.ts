@@ -7,6 +7,18 @@ const json = (body: unknown, status = 200, origin = '') => new Response(JSON.str
 const normalize = (value = '') => value.normalize('NFKD').toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim();
 const randomToken = () => crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '');
 const sha256 = async (value: string) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))).map(v => v.toString(16).padStart(2, '0')).join('');
+const localDate = (timezone: string) => {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+};
+const consumeRateLimit = async (request: Request, action: 'lookup' | 'help' | 'unlock-edit', windowSeconds: number, attemptLimit: number) => {
+  const forwarded = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const identifierHash = await sha256(`${forwarded}|${action}`);
+  const { data, error } = await supabase.rpc('consume_rsvp_rate_limit', { identifier_hash: identifierHash, action_name: action, window_seconds: windowSeconds, attempt_limit: attemptLimit });
+  if (error) throw error;
+  return Boolean(data);
+};
 
 Deno.serve(async request => {
   const origin = request.headers.get('origin') || '';
@@ -17,9 +29,10 @@ Deno.serve(async request => {
     const { data: wedding } = await supabase.from('weddings').select('id,timezone').eq('slug', weddingSlug).single();
     if (!wedding) return json({ code: 'RSVP_NOT_CONFIGURED' }, 503, origin);
     const { data: settings } = await supabase.from('wedding_rsvp_settings').select('*').eq('wedding_id', wedding.id).maybeSingle();
-    const closed = !settings?.deadline_date || settings.is_manually_closed || new Date() > new Date(`${settings.deadline_date}T23:59:59-04:00`);
+    const closed = !settings?.deadline_date || settings.is_manually_closed || localDate(wedding.timezone || 'America/Detroit') > settings.deadline_date;
     if (input.action === 'status') return json({ configured: Boolean(settings?.deadline_date), closed, deadline: settings?.deadline_date || null, contactCopy: settings?.contact_copy || 'RSVP is not open yet.' }, 200, origin);
     if (input.action === 'help') {
+      if (!await consumeRateLimit(request, 'help', 3600, 5)) return json({ code: 'RATE_LIMITED' }, 429, origin);
       const enteredName = String(input.name || '').trim().slice(0, 120);
       if (!enteredName) return json({ code: 'VALIDATION_FAILED', field: 'name' }, 400, origin);
       const { error } = await supabase.from('rsvp_help_requests').insert({ wedding_id: wedding.id, entered_name: enteredName, contact_method: String(input.contact || '').trim().slice(0, 160) || null, message: String(input.message || '').trim().slice(0, 500) || null, reason: 'lookup_failed' });
@@ -38,11 +51,13 @@ Deno.serve(async request => {
       return json(data, 200, origin);
     }
     if (input.action === 'unlock-edit') {
+      if (!await consumeRateLimit(request, 'unlock-edit', 900, 10)) return json({ code: 'RATE_LIMITED' }, 429, origin);
       const { data, error } = await supabase.rpc('unlock_rsvp_internal', { session_token: String(input.token || ''), edit_pin: String(input.pin || '') });
       if (error) { const code=error.message.includes('PIN_LOCKED')?'PIN_LOCKED':error.message.includes('PIN_INVALID')?'PIN_INVALID':'SESSION_EXPIRED'; return json({code},409,origin); }
       return json({ token:data },200,origin);
     }
     if (input.action !== 'lookup') return json({ code: 'UNKNOWN_ACTION' }, 400, origin);
+    if (!await consumeRateLimit(request, 'lookup', 900, 15)) return json({ code: 'RATE_LIMITED' }, 429, origin);
     const wanted = normalize(String(input.name || ''));
     if (wanted.length < 3) return json({ code: 'VALIDATION_FAILED', field: 'name' }, 400, origin);
     const [{ data: guests }, { data: aliases }, { data: households }, { data: events }, { data: guestEvents }] = await Promise.all([
