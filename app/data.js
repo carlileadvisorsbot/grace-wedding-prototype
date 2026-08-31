@@ -102,6 +102,39 @@ export function registryView(pageHead) {
     <div class="card card-pad" style="margin-top:22px"><span class="pill gold">Publishing safety</span><p class="page-intro" style="margin-top:12px">Only links marked Published are eligible for the guest site. Adding or editing a link does not publish the wedding site.</p></div>`;
 }
 
+export function settingsView(pageHead) {
+  return pageHead('Settings', 'Manage your profile and control who can work inside this wedding workspace.', 'Private wedding workspace') + `
+    <div class="settings-section-grid">
+      <section class="card settings-panel">
+        <span class="eyebrow">Your profile</span><h2>Account details</h2>
+        <form id="profileForm" class="settings-form">
+          <label>Display name<input id="profileDisplayName" autocomplete="name" required></label>
+          <label>Email address<input id="profileEmail" type="email" autocomplete="email" required></label>
+          <div class="settings-meta"><span>Joined</span><strong id="profileJoined">Loading…</strong></div>
+          <button class="button primary" type="submit">Save profile</button>
+          <span class="settings-notice" id="profileNotice" role="status" aria-live="polite"></span>
+        </form>
+      </section>
+      <section class="card settings-panel">
+        <span class="eyebrow">Password</span><h2>Change your password</h2>
+        <form class="password-form" id="passwordForm">
+          <label>New password<input id="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+          <label>Confirm password<input id="confirmNewPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+          <button class="button primary" type="submit">Update password</button>
+          <span id="passwordNotice" role="status" aria-live="polite"></span>
+        </form>
+      </section>
+    </div>
+    <section class="card settings-panel access-code-panel" id="accessCodePanel">
+      <div><span class="eyebrow">Signup code</span><h2>Invite people to this wedding</h2><p id="accessCodeHelp">Loading access controls…</p></div>
+      <div class="code-controls" id="codeControls"></div>
+    </section>
+    <section class="card settings-panel member-panel">
+      <div class="member-panel-head"><div><span class="eyebrow">Wedding access</span><h2>People with access</h2><p>Admins manage people and the signup code. Members can work in the wedding workspace.</p></div><span class="pill" id="memberCount">Loading</span></div>
+      <div id="memberAccessList" class="member-access-list"><div class="empty-note">Loading members…</div></div>
+    </section>`;
+}
+
 async function loadGuests(toast) {
   const id = weddingId();
   const [householdResult, guestResult, eventResult, assignmentResult] = await Promise.all([
@@ -200,9 +233,149 @@ async function loadRegistry(toast) {
   });
 }
 
+async function loadSettings(toast) {
+  const id = weddingId();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) throw userError || new Error('Sign in to manage settings.');
+
+  const loadMembers = async () => {
+    const { data, error } = await supabase.rpc('list_wedding_access', { target_wedding_id: id });
+    if (error) throw error;
+    return data || [];
+  };
+
+  let members = await loadMembers();
+  let current = members.find(member => member.is_current);
+  if (!current) throw new Error('Your wedding membership could not be found.');
+
+  if (current.email.toLowerCase() !== user.email.toLowerCase()) {
+    const { error } = await supabase.rpc('update_my_wedding_profile', {
+      target_wedding_id: id,
+      new_display_name: current.display_name,
+    });
+    if (!error) {
+      members = await loadMembers();
+      current = members.find(member => member.is_current);
+    }
+  }
+
+  const isAdmin = current.access_level === 'admin';
+  const profileForm = document.querySelector('#profileForm');
+  const profileEmail = document.querySelector('#profileEmail');
+  const profileDisplayName = document.querySelector('#profileDisplayName');
+  const profileNotice = document.querySelector('#profileNotice');
+  profileEmail.value = user.email;
+  profileDisplayName.value = current.display_name;
+  document.querySelector('#profileJoined').textContent = new Date(current.joined_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+
+  profileForm.onsubmit = async event => {
+    event.preventDefault();
+    const submit = event.currentTarget.querySelector('[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = 'Saving…';
+    profileNotice.textContent = '';
+    let pendingEmail = false;
+    if (profileEmail.value.trim().toLowerCase() !== user.email.toLowerCase()) {
+      const { data, error } = await supabase.auth.updateUser({ email: profileEmail.value.trim() });
+      if (error) {
+        profileNotice.textContent = error.message;
+        submit.disabled = false;
+        submit.textContent = 'Save profile';
+        return;
+      }
+      pendingEmail = data.user.email.toLowerCase() !== profileEmail.value.trim().toLowerCase();
+    }
+    const { error } = await supabase.rpc('update_my_wedding_profile', {
+      target_wedding_id: id,
+      new_display_name: profileDisplayName.value.trim(),
+    });
+    if (error) profileNotice.textContent = error.message;
+    else {
+      document.querySelector('#accountName').textContent = profileDisplayName.value.trim();
+      profileNotice.textContent = pendingEmail ? 'Display name saved. Confirm the email change from your inbox.' : 'Profile saved.';
+      toast('Profile saved');
+    }
+    submit.disabled = false;
+    submit.textContent = 'Save profile';
+  };
+
+  const codeHelp = document.querySelector('#accessCodeHelp');
+  const codeControls = document.querySelector('#codeControls');
+  if (isAdmin) {
+    const { data: code, error } = await supabase.rpc('get_wedding_signup_code', { target_wedding_id: id });
+    if (error) throw error;
+    codeHelp.textContent = 'Anyone with this code can create an account and join as a Member.';
+    codeControls.innerHTML = `<strong class="signup-code" id="currentSignupCode">${escapeHtml(code || 'Not set')}</strong><button class="button subtle" id="copySignupCode">Copy</button><button class="button" id="rotateSignupCode">Rotate code</button>`;
+    document.querySelector('#copySignupCode').onclick = async () => {
+      await navigator.clipboard.writeText(document.querySelector('#currentSignupCode').textContent);
+      toast('Signup code copied');
+    };
+    document.querySelector('#rotateSignupCode').onclick = async event => {
+      if (!window.confirm('Rotate the signup code? The current code will stop working for new accounts.')) return;
+      event.currentTarget.disabled = true;
+      event.currentTarget.textContent = 'Rotating…';
+      const { data: nextCode, error: rotateError } = await supabase.rpc('rotate_wedding_signup_code', { target_wedding_id: id });
+      if (rotateError) toast(rotateError.message);
+      else {
+        document.querySelector('#currentSignupCode').textContent = nextCode;
+        toast('Signup code rotated');
+      }
+      event.currentTarget.disabled = false;
+      event.currentTarget.textContent = 'Rotate code';
+    };
+  } else {
+    codeHelp.textContent = 'Only an Admin can view or rotate the signup code.';
+    codeControls.innerHTML = '<span class="pill gray">Admin only</span>';
+  }
+
+  const memberList = document.querySelector('#memberAccessList');
+  document.querySelector('#memberCount').textContent = `${members.length} ${members.length === 1 ? 'person' : 'people'}`;
+  memberList.innerHTML = members.map(member => `
+    <div class="member-access-row" data-member-id="${member.member_id}">
+      <span class="person-dot">${escapeHtml((member.display_name || member.email).slice(0, 1).toUpperCase())}</span>
+      <div class="member-access-copy"><strong>${escapeHtml(member.display_name)}</strong><span>${escapeHtml(member.email)} · Joined ${escapeHtml(new Date(member.joined_at).toLocaleDateString())}${member.is_current ? ' · You' : ''}</span></div>
+      <select class="access-select" aria-label="Access level for ${escapeHtml(member.display_name)}" ${isAdmin ? '' : 'disabled'}><option value="admin" ${member.access_level === 'admin' ? 'selected' : ''}>Admin</option><option value="member" ${member.access_level === 'member' ? 'selected' : ''}>Member</option></select>
+      <button class="chip outline remove-member" ${!isAdmin || member.is_current ? 'disabled' : ''}>Remove access</button>
+    </div>`).join('');
+
+  memberList.querySelectorAll('.access-select').forEach(select => {
+    select.addEventListener('change', async event => {
+      const row = event.currentTarget.closest('.member-access-row');
+      event.currentTarget.disabled = true;
+      const { error } = await supabase.rpc('set_wedding_member_access', {
+        target_wedding_id: id,
+        target_member_id: row.dataset.memberId,
+        new_access_level: event.currentTarget.value,
+      });
+      if (error) toast(error.message);
+      else toast('Access level updated');
+      await loadSettings(toast);
+    });
+  });
+
+  memberList.querySelectorAll('.remove-member').forEach(button => {
+    button.addEventListener('click', async event => {
+      const row = event.currentTarget.closest('.member-access-row');
+      const member = members.find(item => item.member_id === row.dataset.memberId);
+      if (!window.confirm(`Remove ${member.display_name}'s access to this wedding?`)) return;
+      event.currentTarget.disabled = true;
+      const { error } = await supabase.rpc('remove_wedding_member', {
+        target_wedding_id: id,
+        target_member_id: member.member_id,
+      });
+      if (error) toast(error.message);
+      else {
+        toast('Access removed');
+        await loadSettings(toast);
+      }
+    });
+  });
+}
+
 export async function bindLiveView(name, toast) {
   if (name === 'guests') await loadGuests(toast);
   if (name === 'registry') await loadRegistry(toast);
+  if (name === 'settings') await loadSettings(toast);
 }
 
 export { escapeHtml };

@@ -136,7 +136,7 @@ begin
     insert into public.wedding_members (
       wedding_id, user_id, invited_email, display_name, role, claimed_at
     ) values (
-      reservation.wedding_id, auth.uid(), current_email, current_name, 'partner', now()
+      reservation.wedding_id, auth.uid(), current_email, current_name, 'planner', now()
     ) returning * into claimed_member;
   elsif claimed_member.user_id is null then
     update public.wedding_members as wm
@@ -201,7 +201,7 @@ begin
     insert into public.wedding_members (
       wedding_id, user_id, invited_email, display_name, role, claimed_at
     ) values (
-      target_wedding.id, auth.uid(), current_email, current_name, 'partner', now()
+      target_wedding.id, auth.uid(), current_email, current_name, 'planner', now()
     ) returning * into claimed_member;
   elsif claimed_member.user_id is null then
     update public.wedding_members as wm

@@ -61,7 +61,7 @@ async function loadAuthenticatedWorkspace() {
 
   const { data: memberships, error: membershipError } = await supabase
     .from('wedding_members')
-    .select('role, display_name, weddings(id, name, slug, event_date, timezone, status)')
+    .select('id, role, display_name, invited_email, claimed_at, weddings(id, name, slug, event_date, timezone, status)')
     .eq('user_id', session.user.id)
     .limit(1);
 
@@ -89,7 +89,7 @@ async function loadAuthenticatedWorkspace() {
     ? `${new Date(`${wedding.event_date}T12:00:00`).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} · ${wedding.status}`
     : `Private wedding room · ${wedding.status}`);
   setText('accountName', displayName);
-  setText('accountRole', `${membership.role} · signed in`);
+  setText('accountRole', `${membership.role === 'partner' ? 'Admin' : 'Member'} · signed in`);
   setText('syncState', 'Connected securely to Supabase');
   setText('logoutButton', 'Log out');
   setText('sidebarLogout', '← Log out');
@@ -98,6 +98,8 @@ async function loadAuthenticatedWorkspace() {
   document.body.dataset.weddingName = wedding.name;
   document.body.dataset.weddingDate = wedding.event_date || '';
   document.body.dataset.weddingStatus = wedding.status;
+  document.body.dataset.memberRole = membership.role;
+  document.body.dataset.memberId = membership.id;
 
   const logout = async (event) => {
     event.preventDefault();
@@ -114,7 +116,7 @@ try {
     const ready = await loadAuthenticatedWorkspace();
     if (!ready) throw new Error('Authentication redirect or wedding assignment required.');
   }
-  await import('./app.js?v=20260831-1');
+  await import('./app.js?v=20260831-2');
 } catch (error) {
   if (!String(error.message).includes('Authentication redirect')) {
     console.error(error);
