@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   getRecoveryRedirect,
   getSignUpErrorMessage,
+  isValidSignupCode,
   resolveSafeNext,
 } from '../login/auth-helpers.js';
 
@@ -27,4 +28,11 @@ test('post-auth navigation cannot leave the current origin', () => {
     resolveSafeNext('https://example.com/steal-session', current),
     'https://grace-wedding-prototype-5gl.pages.dev/app/',
   );
+});
+
+test('signup requires exactly six numeric code characters', () => {
+  assert.equal(isValidSignupCode('246810'), true);
+  assert.equal(isValidSignupCode('24681'), false);
+  assert.equal(isValidSignupCode('24a810'), false);
+  assert.equal(isValidSignupCode('1234567'), false);
 });

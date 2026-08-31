@@ -18,9 +18,9 @@ const showClaimScreen = (emailAddress) => {
         <span class="brand-mark">G</span>
         <p class="eyebrow">Signed in as ${emailAddress}</p>
         <h1>Join your wedding room.</h1>
-        <p>Enter the four-digit code Tucker and Syd chose. The code works only for a pre-approved email address.</p>
+        <p>Your signup reservation could not be completed automatically. Enter the six-digit code again to retry.</p>
         <label for="weddingCode">Wedding code</label>
-        <input id="weddingCode" name="weddingCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required>
+        <input id="weddingCode" name="weddingCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
         <button class="button primary" type="submit">Open wedding room</button>
         <p id="claimNotice" role="status" aria-live="polite"></p>
         <button id="unassignedLogout" class="button" type="button">Use a different email</button>
@@ -69,6 +69,15 @@ async function loadAuthenticatedWorkspace() {
 
   const membership = memberships?.[0];
   if (!membership?.weddings) {
+    if (session.user.user_metadata?.signup_code) {
+      const { error: claimError } = await supabase.rpc('claim_signup_reservation');
+      if (!claimError) {
+        await supabase.auth.updateUser({ data: { signup_code: null } });
+        window.location.reload();
+        return false;
+      }
+      console.warn('Automatic signup reservation claim failed:', claimError.message);
+    }
     showClaimScreen(session.user.email);
     return false;
   }
@@ -105,7 +114,7 @@ try {
     const ready = await loadAuthenticatedWorkspace();
     if (!ready) throw new Error('Authentication redirect or wedding assignment required.');
   }
-  await import('./app.js?v=20260830-4');
+  await import('./app.js?v=20260831-1');
 } catch (error) {
   if (!String(error.message).includes('Authentication redirect')) {
     console.error(error);

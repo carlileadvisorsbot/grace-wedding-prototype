@@ -1,6 +1,6 @@
 # Supabase setup
 
-This first vertical slice turns the existing couple dashboard into a real private room while leaving the guest site intact. It adds magic-link authentication, equal partner membership, live Guests, Households, event assignment, Registry management, shared wedding metadata, and Row Level Security.
+This first vertical slice turns the existing couple dashboard into a real private room while leaving the guest site intact. It adds email-and-password authentication, equal partner membership, live Guests, Households, event assignment, Registry management, shared wedding metadata, and Row Level Security.
 
 ## Information needed
 
@@ -27,8 +27,8 @@ The migration enables Row Level Security on every private table. A signed-in use
 
 In **Authentication → URL Configuration**, set:
 
-- Site URL: `https://carlileadvisorsbot.github.io/grace-wedding-prototype/`
-- Additional Redirect URL: `https://carlileadvisorsbot.github.io/grace-wedding-prototype/app/`
+- Site URL: `https://grace-wedding-prototype-5gl.pages.dev/`
+- Additional Redirect URL: `https://grace-wedding-prototype-5gl.pages.dev/**`
 - Local development redirect: `http://localhost:4173/app/`
 
 ## 4. Connect the browser app
@@ -39,9 +39,9 @@ In **Project Settings → API**, copy the project URL and publishable key into:
 
 These values identify the Supabase project; security comes from authentication and the database policies. They are intentionally safe for a public browser bundle.
 
-## 5. Claim the two partner accounts
+## 5. Create the two partner accounts
 
-The two approved partner emails are seeded as pending memberships. Open `/login/`, enter each partner email separately, use the emailed magic link, and enter the shared four-digit wedding code once.
+Provision a fresh six-digit signup code directly in Supabase; never commit a live code to the repository. Each partner opens `/login/?mode=signup`, enters an email, password twice, and the signup code, then verifies the email.
 
 Each partner gets a separate login and equal `partner` membership in the same wedding room.
 

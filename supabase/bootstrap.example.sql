@@ -6,13 +6,13 @@ begin
   values (
     'Tucker & Syd', 'tucker-and-syd', '2027-06-26',
     'Walloon Lake Country Club', 'America/Detroit', 'planning',
-    extensions.crypt('9898', extensions.gen_salt('bf'))
+    null
   )
   on conflict (slug) do update set
     name = excluded.name,
     event_date = excluded.event_date,
     venue = excluded.venue,
-    join_code_hash = excluded.join_code_hash
+    join_code_hash = coalesce(public.weddings.join_code_hash, excluded.join_code_hash)
   returning id into new_wedding_id;
 
   insert into public.wedding_members (wedding_id, invited_email, display_name, role)

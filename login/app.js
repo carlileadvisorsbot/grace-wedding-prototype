@@ -3,6 +3,7 @@ import {
   friendlyAuthError,
   getRecoveryRedirect,
   getSignUpErrorMessage,
+  isValidSignupCode,
   resolveSafeNext,
 } from './auth-helpers.js';
 
@@ -11,6 +12,8 @@ const email = document.getElementById('email');
 const password = document.getElementById('password');
 const confirmPassword = document.getElementById('confirmPassword');
 const confirmField = document.getElementById('confirmField');
+const signupCode = document.getElementById('signupCode');
+const signupCodeField = document.getElementById('signupCodeField');
 const button = document.getElementById('submitButton');
 const notice = document.getElementById('notice');
 const signInTab = document.getElementById('signInTab');
@@ -41,6 +44,8 @@ function setMode(nextMode) {
   document.querySelector('label[for="email"]').hidden = resetting;
   confirmField.hidden = !signingUp;
   confirmPassword.required = signingUp;
+  signupCodeField.hidden = !signingUp;
+  signupCode.required = signingUp;
   password.autocomplete = signingUp || resetting ? 'new-password' : 'current-password';
   passwordLabel.textContent = resetting ? 'New password' : 'Password';
   signInTab.classList.toggle('active', !signingUp);
@@ -51,7 +56,7 @@ function setMode(nextMode) {
   authIntro.textContent = resetting
     ? 'Use at least 8 characters. Your new password will work immediately.'
     : signingUp
-      ? 'Use your pre-approved partner email. After verification, enter the wedding code to join the shared workspace.'
+      ? 'Use any email, choose a password, and enter the signup code for the wedding workspace you are joining.'
       : 'Log in with the email and password you chose for your private wedding workspace.';
   button.textContent = resetting ? 'Save new password' : signingUp ? 'Create account' : 'Log in';
   forgotPassword.hidden = signingUp || resetting;
@@ -107,10 +112,20 @@ form.addEventListener('submit', async (event) => {
       button.textContent = 'Create account';
       return;
     }
+    if (!isValidSignupCode(signupCode.value)) {
+      showNotice('Enter the six-digit signup code for your wedding workspace.', true);
+      signupCode.focus();
+      button.disabled = false;
+      button.textContent = 'Create account';
+      return;
+    }
     const { data, error } = await supabase.auth.signUp({
       email: email.value.trim(),
       password: password.value,
-      options: { emailRedirectTo: safeNext },
+      options: {
+        emailRedirectTo: safeNext,
+        data: { signup_code: signupCode.value },
+      },
     });
     const signUpError = getSignUpErrorMessage(data, error);
     if (signUpError) {
@@ -124,7 +139,7 @@ form.addEventListener('submit', async (event) => {
       return;
     }
     form.reset();
-    showNotice('Account created. Check your email to verify it, then you’ll enter the wedding code.');
+    showNotice('Account created. Check your email to verify it; your wedding workspace will open automatically.');
     button.textContent = 'Check your email';
     return;
   }
