@@ -1,4 +1,4 @@
-import { bindLiveView, escapeHtml, guestsView, registryView, settingsView } from './data.js?v=20260831-1';
+import { bindLiveView, escapeHtml, guestsView, registryView, rsvpsView, settingsView } from './data.js?v=20260831-2';
 import { supabase } from '../shared/supabase.js';
 
 const $ = (s, root=document) => root.querySelector(s);
@@ -58,6 +58,7 @@ vendors: () => pageHead('Vendors','Research and conversations organized without 
 };
 
 views.guests = () => guestsView(pageHead);
+views.rsvps = () => rsvpsView(pageHead);
 views.registry = () => registryView(pageHead);
 views.settings = () => settingsView(pageHead);
 
@@ -81,7 +82,7 @@ function bindView(name){
   const passwordForm=$('#passwordForm'); if(passwordForm) passwordForm.addEventListener('submit',async e=>{e.preventDefault();const next=$('#newPassword'),confirm=$('#confirmNewPassword'),notice=$('#passwordNotice'),submit=e.currentTarget.querySelector('[type="submit"]');if(next.value!==confirm.value){notice.textContent='The two passwords do not match.';confirm.focus();return}submit.disabled=true;submit.textContent='Updating…';const{error}=await supabase.auth.updateUser({password:next.value});if(error){notice.textContent='We could not update your password. Try again in a moment.';submit.disabled=false;submit.textContent='Update password';return}e.currentTarget.reset();notice.textContent='Password updated.';submit.disabled=false;submit.textContent='Update password'});
   const search=$('#guestSearch');if(search)search.addEventListener('input',()=>{$$('#guestTable tbody tr').forEach(row=>{if(row.classList.contains('household-row'))return;row.style.display=row.dataset.search.includes(search.value.toLowerCase())?'':'none'})});
   bindLiveView(name, toast).catch(error => {
-    const target = name === 'guests' ? $('#liveGuestList') : name === 'registry' ? $('#liveRegistry') : name === 'settings' ? $('#memberAccessList') : null;
+    const target = name === 'guests' ? $('#liveGuestList') : name === 'registry' ? $('#liveRegistry') : name === 'settings' ? $('#memberAccessList') : name === 'rsvps' ? $('#rsvpHelpList') : null;
     if (target) target.innerHTML = `<div class="empty-note">${escapeHtml(error.message || 'Could not load this section.')}</div>`;
   });
 }

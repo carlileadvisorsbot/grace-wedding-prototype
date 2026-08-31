@@ -45,6 +45,7 @@ function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit
     <div><span class="eyebrow">Private wedding data</span><h2>${escapeHtml(title)}</h2></div>
     <div class="form-fields">${fields.map(field => {
       const value = values[field.name] ?? '';
+      if (field.type === 'checkbox-group') return `<fieldset class="checkbox-group"><legend>${escapeHtml(field.label)}</legend>${field.options.map(option => { const selected = Array.isArray(value) && value.some(item => String(item.value) === String(option.value)); const plusOne = Array.isArray(value) && value.find(item => String(item.value) === String(option.value))?.plus_one_allowed; return `<div class="event-check-row"><label class="check-field"><input name="${field.name}" type="checkbox" value="${escapeHtml(option.value)}" ${selected ? 'checked' : ''}><span>${escapeHtml(option.label)}</span></label><label class="check-field plus-one-event"><input name="${field.name}_plus_one_${escapeHtml(option.value)}" type="checkbox" ${plusOne ? 'checked' : ''}><span>Allow plus-one</span></label></div>`; }).join('')}</fieldset>`;
       if (field.type === 'checkbox') return `<label class="check-field"><input name="${field.name}" type="checkbox" ${value ? 'checked' : ''}><span>${escapeHtml(field.label)}</span></label>`;
       if (field.type === 'select') return `<label>${escapeHtml(field.label)}<select name="${field.name}"><option value="">${escapeHtml(field.placeholder || 'None')}</option>${field.options.map(option => `<option value="${escapeHtml(option.value)}" ${String(value) === String(option.value) ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}</select></label>`;
       if (field.type === 'textarea') return `<label>${escapeHtml(field.label)}<textarea name="${field.name}" rows="3" placeholder="${escapeHtml(field.placeholder || '')}">${escapeHtml(value)}</textarea></label>`;
@@ -66,7 +67,11 @@ function openDialog({ title, submitLabel = 'Save', fields, values = {}, onSubmit
     const button = dialog.querySelector('#dialogSubmit');
     const formData = new FormData(event.currentTarget);
     const payload = {};
-    fields.forEach(field => { payload[field.name] = field.type === 'checkbox' ? formData.has(field.name) : String(formData.get(field.name) || '').trim(); });
+    fields.forEach(field => {
+      if (field.type === 'checkbox') payload[field.name] = formData.has(field.name);
+      else if (field.type === 'checkbox-group') payload[field.name] = formData.getAll(field.name).map(value => ({ value, plus_one_allowed: formData.has(`${field.name}_plus_one_${value}`) }));
+      else payload[field.name] = String(formData.get(field.name) || '').trim();
+    });
     button.disabled = true;
     button.textContent = 'Saving…';
     try { await onSubmit(payload); dialog.close(); }
@@ -135,6 +140,13 @@ export function settingsView(pageHead) {
     </section>`;
 }
 
+export function rsvpsView(pageHead) {
+  return pageHead('RSVPs','Live responses, deadlines, and guest lookup help in one private place.','Private · RSVP closed by default',`<a class="button subtle" href="../rsvp/" target="_blank" rel="noopener">Preview RSVP ↗</a>`) + `
+    <div class="grid four" id="rsvpMetrics"><div class="card metric"><span class="label">Loading</span><strong>—</strong></div></div>
+    <div class="grid two"><section class="card settings-panel"><span class="eyebrow">Guest deadline</span><h2>RSVP availability</h2><form id="rsvpSettingsForm" class="settings-form"><label>Deadline<input id="rsvpDeadline" type="date" required></label><label>After-deadline message<textarea id="rsvpContactCopy" rows="3" required></textarea></label><label class="check-field"><input id="rsvpManuallyClosed" type="checkbox"><span>Keep online RSVP closed</span></label><button class="button primary" type="submit">Save RSVP settings</button><span id="rsvpSettingsNotice" role="status"></span></form></section><section class="card settings-panel"><span class="eyebrow">One shared link</span><h2>Invitation RSVP</h2><p>Every invitation will use the same QR code.</p><code class="signup-code">/rsvp/</code><p class="page-intro">The invitation-ready QR stays pending until the final custom domain is confirmed.</p></section></div>
+    <div class="section-title"><h2>Needs help</h2><span class="pill" id="rsvpHelpCount">Loading</span></div><div class="card" id="rsvpHelpList"><div class="empty-note">Loading requests…</div></div>`;
+}
+
 async function loadGuests(toast) {
   const id = weddingId();
   const [householdResult, guestResult, eventResult, assignmentResult] = await Promise.all([
@@ -160,7 +172,8 @@ async function loadGuests(toast) {
     const statuses = guestAssignments.map(item => item.rsvp_status);
     const rsvp = statuses.includes('attending') ? 'Attending' : statuses.includes('declined') ? 'Declined' : 'Pending';
     const household = householdById[guest.household_id];
-    return `<tr data-search="${escapeHtml(`${guestName(guest)} ${household?.name || ''}`.toLowerCase())}"><td><div class="person"><span class="person-dot">${escapeHtml((guest.first_name[0] || '') + (guest.last_name[0] || ''))}</span><div><strong>${escapeHtml(guestName(guest))}</strong><small>${guest.plus_one_allowed ? 'Plus-one allowed' : 'Named guest'}</small></div></div></td><td>${escapeHtml(household?.name || 'No household')}</td><td>${escapeHtml(eventNames)}</td><td><span class="pill ${rsvp === 'Attending' ? 'green' : 'gold'}">${rsvp}</span></td><td><div class="row-actions"><button class="chip edit-guest" data-id="${guest.id}">Edit</button><button class="chip outline delete-guest" data-id="${guest.id}">Delete</button></div></td></tr>`;
+    const plusOneCount = guestAssignments.filter(item => item.invited && item.plus_one_allowed).length;
+    return `<tr data-search="${escapeHtml(`${guestName(guest)} ${household?.name || ''}`.toLowerCase())}"><td><div class="person"><span class="person-dot">${escapeHtml((guest.first_name[0] || '') + (guest.last_name[0] || ''))}</span><div><strong>${escapeHtml(guestName(guest))}</strong><small>${plusOneCount ? `Plus-one allowed for ${plusOneCount} event${plusOneCount === 1 ? '' : 's'}` : 'Named guest'}</small></div></div></td><td>${escapeHtml(household?.name || 'No household')}</td><td>${escapeHtml(eventNames)}</td><td><span class="pill ${rsvp === 'Attending' ? 'green' : 'gold'}">${rsvp}</span></td><td><div class="row-actions"><button class="chip edit-guest" data-id="${guest.id}">Edit</button><button class="chip outline delete-guest" data-id="${guest.id}">Delete</button></div></td></tr>`;
   }).join('');
   document.querySelector('#liveGuestList').innerHTML = guests.length ? `<table class="table" id="guestTable"><thead><tr><th>Guest</th><th>Household</th><th>Events</th><th>RSVP</th><th></th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty-note">No guests yet. Add a household, then add your first guest.</div>';
 
@@ -184,15 +197,18 @@ async function loadGuests(toast) {
   const guestFields = [
     { name: 'first_name', label: 'First name', required: true }, { name: 'last_name', label: 'Last name' }, { name: 'preferred_name', label: 'Preferred name' },
     { name: 'household_id', label: 'Household', type: 'select', options: households.map(item => ({ value: item.id, label: item.name })) }, { name: 'email', label: 'Email', type: 'email' },
-    { name: 'event_id', label: 'Invite to event', type: 'select', options: events.map(item => ({ value: item.id, label: item.name })), placeholder: 'Not assigned yet' },
-    { name: 'plus_one_allowed', label: 'Allow a plus-one', type: 'checkbox' }, { name: 'dietary_notes', label: 'Dietary notes', type: 'textarea' },
+    { name: 'events', label: 'Event invitations', type: 'checkbox-group', options: events.map(item => ({ value: item.id, label: item.name })) },
+    { name: 'dietary_notes', label: 'Dietary notes', type: 'textarea' },
   ];
-  const saveGuest = existing => openDialog({ title: existing ? `Edit ${guestName(existing)}` : 'Add a guest', fields: guestFields, values: existing ? { ...existing, event_id: (assignmentsByGuest[existing.id] || []).find(item => item.invited)?.event_id || '' } : {}, onSubmit: async payload => {
-    const eventId = payload.event_id || null; delete payload.event_id; payload.household_id ||= null;
-    const query = existing ? supabase.from('guests').update(payload).eq('id', existing.id).eq('wedding_id', id) : supabase.from('guests').insert({ ...payload, wedding_id: id });
-    const { data, error: saveError } = await query.select().single(); if (saveError) throw saveError;
-    if (eventId) { const { error: assignmentError } = await supabase.from('guest_events').upsert({ wedding_id: id, guest_id: data.id, event_id: eventId, invited: true }, { onConflict: 'guest_id,event_id' }); if (assignmentError) throw assignmentError; }
-    await recordActivity(existing ? 'updated' : 'created', 'guest', data.id, data); toast(existing ? 'Guest updated' : 'Guest added'); await loadGuests(toast);
+  const saveGuest = existing => openDialog({ title: existing ? `Edit ${guestName(existing)}` : 'Add a guest', fields: guestFields, values: existing ? { ...existing, events: (assignmentsByGuest[existing.id] || []).filter(item => item.invited).map(item => ({ value: item.event_id, plus_one_allowed: item.plus_one_allowed })) } : {}, onSubmit: async payload => {
+    const rpcPayload = { ...payload, household_id: payload.household_id || null, events: payload.events.map(item => ({ event_id: item.value, plus_one_allowed: item.plus_one_allowed })) };
+    if (existing) rpcPayload.guest_id = existing.id;
+    const { error: saveError } = await supabase.rpc('save_guest_bundle', { payload: rpcPayload, expected_version: existing?.version || null });
+    if (saveError) {
+      if (saveError.message.includes('GUEST_CHANGED')) throw new Error('This guest changed in another session. Close this form, review the latest record, and try again.');
+      throw saveError;
+    }
+    toast(existing ? 'Guest and invitations updated' : 'Guest and invitations added'); await loadGuests(toast);
   }});
   document.querySelector('#addGuest').onclick = () => saveGuest(null);
   document.querySelectorAll('.edit-guest').forEach(button => button.onclick = () => saveGuest(guests.find(item => item.id === button.dataset.id)));
@@ -372,10 +388,26 @@ async function loadSettings(toast) {
   });
 }
 
+async function loadRsvps(toast) {
+  const id=weddingId();
+  const [assignmentResult,settingsResult,helpResult]=await Promise.all([
+    supabase.from('guest_events').select('rsvp_status,invited').eq('wedding_id',id).eq('invited',true),
+    supabase.from('wedding_rsvp_settings').select('*').eq('wedding_id',id).maybeSingle(),
+    supabase.from('rsvp_help_requests').select('*').eq('wedding_id',id).eq('status','open').order('created_at',{ascending:false}),
+  ]);
+  const error=assignmentResult.error||settingsResult.error||helpResult.error;if(error)throw error;
+  const rows=assignmentResult.data||[],attending=rows.filter(x=>x.rsvp_status==='attending').length,declined=rows.filter(x=>x.rsvp_status==='declined').length,pending=rows.filter(x=>x.rsvp_status==='pending').length;
+  document.querySelector('#rsvpMetrics').innerHTML=`<div class="card metric"><span class="label">Attending</span><strong>${attending}</strong></div><div class="card metric"><span class="label">Declined</span><strong>${declined}</strong></div><div class="card metric"><span class="label">Waiting</span><strong>${pending}</strong></div><div class="card metric"><span class="label">Response rate</span><strong>${rows.length?Math.round((attending+declined)/rows.length*100):0}%</strong></div>`;
+  const settings=settingsResult.data; document.querySelector('#rsvpDeadline').value=settings?.deadline_date||''; document.querySelector('#rsvpContactCopy').value=settings?.contact_copy||'Online RSVP has closed. Please contact Tucker or Sydney if you need to make a change.'; document.querySelector('#rsvpManuallyClosed').checked=settings?.is_manually_closed??true;
+  document.querySelector('#rsvpSettingsForm').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;const{error}=await supabase.rpc('save_rsvp_settings',{target_wedding_id:id,new_deadline:document.querySelector('#rsvpDeadline').value,new_contact_copy:document.querySelector('#rsvpContactCopy').value,new_manually_closed:document.querySelector('#rsvpManuallyClosed').checked});document.querySelector('#rsvpSettingsNotice').textContent=error?error.message:'RSVP settings saved.';button.disabled=false;if(!error)toast('RSVP settings saved');};
+  const help=helpResult.data||[];document.querySelector('#rsvpHelpCount').textContent=`${help.length} open`;document.querySelector('#rsvpHelpList').innerHTML=help.length?help.map(item=>`<div class="task-row"><span class="pill gold">Help</span><div class="task-copy"><strong>${escapeHtml(item.entered_name)}</strong><span>${escapeHtml(item.contact_method||'No contact supplied')} · ${escapeHtml(new Date(item.created_at).toLocaleString())}</span></div></div>`).join(''):'<div class="empty-note">No guest lookup requests.</div>';
+}
+
 export async function bindLiveView(name, toast) {
   if (name === 'guests') await loadGuests(toast);
   if (name === 'registry') await loadRegistry(toast);
   if (name === 'settings') await loadSettings(toast);
+  if (name === 'rsvps') await loadRsvps(toast);
 }
 
 export { escapeHtml };
