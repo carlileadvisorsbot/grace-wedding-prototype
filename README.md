@@ -1,13 +1,13 @@
 # Grace wedding site and couple workspace
 
-Start at `index.html`. It redirects to the public product landing page.
+Start at `index.html`. It redirects to Tucker and Syd's guest-facing wedding site.
 
 ## Surfaces
 
-- `marketing/index.html` — public Wedding OS product site
+- `marketing/index.html` — public Grace cover/product page, linked from the wedding-site footer
 - `login/index.html` — Supabase magic-link login
 - `app/index.html` — private couple workspace with nine clickable views
-- `wedding/index.html` — Tucker and Syd guest-facing wedding-site design preview
+- `wedding/index.html` — Tucker and Syd's guest-facing wedding site and public entry point
 
 See `SUPABASE_SETUP.md` to connect authentication and shared wedding data.
 
