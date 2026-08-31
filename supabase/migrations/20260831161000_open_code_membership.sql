@@ -118,16 +118,16 @@ begin
    where id = reservation.wedding_id;
 
   select * into claimed_member
-    from public.wedding_members
-   where wedding_id = reservation.wedding_id and user_id = auth.uid()
+    from public.wedding_members as wm
+   where wm.wedding_id = reservation.wedding_id and wm.user_id = auth.uid()
    limit 1;
 
   if claimed_member.id is null then
     select * into claimed_member
-      from public.wedding_members
-     where wedding_id = reservation.wedding_id
-       and user_id is null
-       and lower(invited_email) = current_email
+      from public.wedding_members as wm
+     where wm.wedding_id = reservation.wedding_id
+       and wm.user_id is null
+       and lower(wm.invited_email) = current_email
      for update skip locked
      limit 1;
   end if;
@@ -183,16 +183,16 @@ begin
   end if;
 
   select * into claimed_member
-    from public.wedding_members
-   where wedding_id = target_wedding.id and user_id = auth.uid()
+    from public.wedding_members as wm
+   where wm.wedding_id = target_wedding.id and wm.user_id = auth.uid()
    limit 1;
 
   if claimed_member.id is null then
     select * into claimed_member
-      from public.wedding_members
-     where wedding_id = target_wedding.id
-       and user_id is null
-       and lower(invited_email) = current_email
+      from public.wedding_members as wm
+     where wm.wedding_id = target_wedding.id
+       and wm.user_id is null
+       and lower(wm.invited_email) = current_email
      for update skip locked
      limit 1;
   end if;
